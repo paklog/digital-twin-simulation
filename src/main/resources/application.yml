@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: digital-twin-simulation
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/digital_twin_simulation}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.cloudevents.kafka.CloudEventSerializer
+    consumer:
+      group-id: digital-twin-simulation
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.cloudevents.kafka.CloudEventDeserializer
+
+server:
+  port: 8099
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.paklog.digital.twin.simulation: DEBUG
