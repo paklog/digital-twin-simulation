@@ -1,11 +1,15 @@
 spring:
   application:
     name: digital-twin-simulation
-
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/digital_twin_simulation}
-
+      uri: ${MONGODB_URI:mongodb://localhost:27017/digital_twin}
+      auto-index-creation: true
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
@@ -17,7 +21,7 @@ spring:
       value-deserializer: io.cloudevents.kafka.CloudEventDeserializer
 
 server:
-  port: 8099
+  port: ${SERVER_PORT:8099}
 
 management:
   endpoints:
@@ -25,11 +29,21 @@ management:
       exposure:
         include: health,info,metrics,prometheus
   metrics:
-    export:
-      prometheus:
-        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+simulation:
+  max-concurrent-simulations: 100
+  max-time-acceleration: 1000
+  history-replay-days: 90
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 
 logging:
   level:
     root: INFO
-    com.paklog.digital.twin.simulation: DEBUG
+    com.paklog.digitaltwin: DEBUG
